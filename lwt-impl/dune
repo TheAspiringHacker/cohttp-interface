@@ -1,0 +1,3 @@
+(library
+  (name lwt_impl)
+  (libraries intf cohttp-lwt))
