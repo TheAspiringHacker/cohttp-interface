@@ -63,9 +63,9 @@ module Client = struct
 
   let head ?headers uri = Cohttp_async.Client.head ?headers uri
 
-  let delete ?body ?chunked ?headers uri =
+  let delete ?headers ?chunked ?body uri =
     let body = map_opt Body.to_async_body body in
-    convert (Cohttp_async.Client.delete ?body ?chunked ?headers uri)
+    convert (Cohttp_async.Client.delete ?headers ?chunked ?body uri)
 
   let post ?headers ?chunked ?body uri =
     let body = map_opt Body.to_async_body body in
@@ -75,9 +75,9 @@ module Client = struct
     let body = map_opt Body.to_async_body body in
     convert (Cohttp_async.Client.put ?headers ?chunked ?body uri)
 
-  let patch ?body ?chunked ?headers uri =
+  let patch ?headers ?chunked ?body uri =
     let body = map_opt Body.to_async_body body in
-    convert (Cohttp_async.Client.patch ?body ?chunked ?headers uri)
+    convert (Cohttp_async.Client.patch ?headers ?chunked ?body uri)
 
   let post_form ?headers ~params uri =
     convert (Cohttp_async.Client.post_form ?headers ~params uri)

@@ -48,9 +48,9 @@ module type S = sig
     val head : ?headers:Cohttp.Header.t -> Uri.t -> Cohttp.Response.t t
 
     val delete
-        :  ?body:Body.t
+        :  ?headers:Cohttp.Header.t
         -> ?chunked:bool
-        -> ?headers:Cohttp.Header.t
+        -> ?body:Body.t
         -> Uri.t
         -> (Cohttp.Response.t * Body.t) t
 
@@ -69,9 +69,9 @@ module type S = sig
         -> (Cohttp.Response.t * Body.t) t
 
     val patch
-        :  ?body:Body.t
+        :  ?headers:Cohttp.Header.t
         -> ?chunked:bool
-        -> ?headers:Cohttp.Header.t
+        -> ?body:Body.t
         -> Uri.t
         -> (Cohttp.Response.t * Body.t) t
 

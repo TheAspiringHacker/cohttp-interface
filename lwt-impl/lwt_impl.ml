@@ -44,14 +44,14 @@ module Make (C : Cohttp_lwt.S.Client) = struct
 
     let head ?headers uri = C.head ?headers uri
 
-    let delete ?body ?chunked ?headers uri =
-      C.delete ?body ?chunked ?headers uri
+    let delete ?headers ?chunked ?body uri =
+      C.delete ?headers ?chunked ?body uri
 
     let post ?headers ?chunked ?body uri = C.post ?headers ?chunked ?body uri
 
     let put ?headers ?chunked ?body uri = C.put ?headers ?chunked ?body uri
 
-    let patch ?body ?chunked ?headers uri = C.patch ?body ?chunked ?headers uri
+    let patch ?headers ?chunked ?body uri = C.patch ?headers ?chunked ?body uri
 
     let post_form ?headers ~params uri = C.post_form ?headers ~params uri
   end
