@@ -1,3 +1,11 @@
+type 'a t = 'a Async_kernel.Deferred.t
+
+module Monad = struct
+  type nonrec 'a t = 'a t
+  let (>|=) = Async_kernel.(>>|)
+  let (>>=) = Async_kernel.(>>=)
+end
+
 module Body = struct
   type streamer = Base.string Async_kernel.Pipe.Reader.t
 
@@ -16,6 +24,10 @@ module Body = struct
 
   let convert f x = of_async_body (f x)
 
+  let to_string t = to_async_body t |> Cohttp_async.Body.to_string
+
+  let to_string_list t = to_async_body t |> Cohttp_async.Body.to_string_list
+
   let empty = of_async_body Cohttp_async.Body.empty
 
   let of_string = convert Cohttp_async.Body.of_string
@@ -26,8 +38,6 @@ module Body = struct
 end
 
 module Client = struct
-  type 'a t = 'a Async_kernel.Deferred.t
-
   let convert x =
     let open Async_kernel in
     x >>| fun (resp, body) -> (resp, Body.of_async_body body)

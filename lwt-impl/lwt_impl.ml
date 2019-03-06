@@ -1,4 +1,12 @@
 module Make (C : Cohttp_lwt.S.Client) = struct
+  type 'a t = 'a Lwt.t
+
+  module Monad = struct
+    type nonrec 'a t = 'a t
+    let (>|=) = Lwt.(>|=)
+    let (>>=) = Lwt.(>>=)
+  end
+
   module Body = struct
     type streamer = string Lwt_stream.t
 
@@ -6,6 +14,10 @@ module Make (C : Cohttp_lwt.S.Client) = struct
       | Cohttp.Body.t
       | `Stream of streamer
       ]
+
+    let to_string = Cohttp_lwt.Body.to_string
+
+    let to_string_list = Cohttp_lwt.Body.to_string_list
 
     let empty = Cohttp_lwt.Body.empty
 
@@ -17,8 +29,6 @@ module Make (C : Cohttp_lwt.S.Client) = struct
   end
 
   module Client = struct
-    type 'a t = 'a Lwt.t
-
     let get ?headers uri = C.get ?headers uri
 
     let head ?headers uri = C.head ?headers uri
