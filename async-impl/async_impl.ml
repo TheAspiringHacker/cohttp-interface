@@ -4,15 +4,16 @@ module Monad = struct
   type nonrec 'a t = 'a t
   let (>|=) = Async_kernel.(>>|)
   let (>>=) = Async_kernel.(>>=)
+  let return = Async_kernel.return
 end
 
 module Body = struct
-  type streamer = Base.string Async_kernel.Pipe.Reader.t
+  type stream = Base.string Async_kernel.Pipe.Reader.t
 
   type t = [
     | Cohttp.Body.t
-    | `Stream of streamer
-    ]
+    | `Stream of stream
+  ]
 
   let of_async_body : Cohttp_async.Body.t -> t = function
     | `Pipe x -> `Stream x
@@ -30,11 +31,22 @@ module Body = struct
 
   let empty = of_async_body Cohttp_async.Body.empty
 
+  let map f a = of_async_body (Cohttp_async.Body.map ~f (to_async_body a))
+
+  let transfer_encoding t =
+    to_async_body t |> Cohttp_async.Body.transfer_encoding
+
+  let is_empty t = to_async_body t |> Cohttp_async.Body.is_empty
+
   let of_string = convert Cohttp_async.Body.of_string
 
   let of_string_list = convert Cohttp_async.Body.of_string_list
 
-  let map f a = of_async_body (Cohttp_async.Body.map ~f (to_async_body a))
+  let to_stream t = to_async_body t |> Cohttp_async.Body.to_pipe
+
+  let of_stream = convert Cohttp_async.Body.of_pipe
+
+  let drain_body t = to_async_body t |> Cohttp_async.Body.drain
 end
 
 module Client = struct

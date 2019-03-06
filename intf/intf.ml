@@ -5,15 +5,16 @@ module type S = sig
     type nonrec 'a t = 'a t
     val (>|=) : 'a t -> ('a -> 'b) -> 'b t
     val (>>=) : 'a t -> ('a -> 'b t) -> 'b t
+    val return : 'a -> 'a t
   end
 
   module Body : sig
-    type streamer
+    type stream
 
     type t = [
       | Cohttp.Body.t
-      | `Stream of streamer
-      ]
+      | `Stream of stream
+    ]
 
     val to_string : t -> string Monad.t
 
@@ -21,11 +22,21 @@ module type S = sig
 
     val empty : t
 
+    val map : (string -> string) -> t -> t
+
+    val transfer_encoding : t -> Cohttp.Transfer.encoding
+
+    val is_empty : t -> bool Monad.t
+
     val of_string : string -> t
 
     val of_string_list : string list -> t
 
-    val map : (string -> string) -> t -> t
+    val to_stream : t -> stream
+
+    val of_stream : stream -> t
+
+    val drain_body : t -> unit Monad.t
   end
 
   module Client : sig

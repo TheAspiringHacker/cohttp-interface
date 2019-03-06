@@ -5,15 +5,16 @@ module Make (C : Cohttp_lwt.S.Client) = struct
     type nonrec 'a t = 'a t
     let (>|=) = Lwt.(>|=)
     let (>>=) = Lwt.(>>=)
+    let return = Lwt.return
   end
 
   module Body = struct
-    type streamer = string Lwt_stream.t
+    type stream = string Lwt_stream.t
 
     type t = [
       | Cohttp.Body.t
-      | `Stream of streamer
-      ]
+      | `Stream of stream
+    ]
 
     let to_string = Cohttp_lwt.Body.to_string
 
@@ -21,11 +22,21 @@ module Make (C : Cohttp_lwt.S.Client) = struct
 
     let empty = Cohttp_lwt.Body.empty
 
+    let map = Cohttp_lwt.Body.map
+
+    let transfer_encoding = Cohttp_lwt.Body.transfer_encoding
+
+    let is_empty = Cohttp_lwt.Body.is_empty
+
     let of_string = Cohttp_lwt.Body.of_string
 
     let of_string_list = Cohttp_lwt.Body.of_string_list
 
-    let map = Cohttp_lwt.Body.map
+    let to_stream = Cohttp_lwt.Body.to_stream
+
+    let of_stream = Cohttp_lwt.Body.of_stream
+
+    let drain_body = Cohttp_lwt.Body.drain_body
   end
 
   module Client = struct
